@@ -1,26 +1,42 @@
 package com.holmsted.gerrit;
 
-import com.beust.jcommander.IStringConverter;
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.ParameterException;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
+import com.beust.jcommander.IStringConverter;
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
+
 @SuppressWarnings("unused")
 public class CommandLineParser {
 
     private static final String DEFAULT_OUTPUT_DIR = "out";
+
+    public static class DateConverter implements IStringConverter<AtomicLong> {
+        @Override
+        public AtomicLong convert(String value) {
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                return new AtomicLong(dateFormat.parse(value).getTime());
+            } catch (ParseException e) {
+                return new AtomicLong(0);
+            }
+        }
+    }
 
     @Parameter(names = {"-f", "--file", "--files"},
             description = "Read output from comma-separated list of files or directories. "
@@ -58,6 +74,13 @@ public class CommandLineParser {
                     + "Lorem ipsumizes all review comments. The statistic numbers are kept intact. "
                     + "Useful for demonstration purposes outside an organization.")
     private boolean anonymizeData;
+
+    @Parameter(names = {"-s", "--start-date"},
+            description = "If specified, commits older than this date won't be processed. "
+            + "Format should be in the form yyyy-mm-dd",
+            converter = DateConverter.class)
+    @Nonnull
+    private AtomicLong startDateTimestamp = new AtomicLong(0);
 
     @Nonnull
     private final JCommander jCommander = new JCommander(this);
@@ -128,8 +151,13 @@ public class CommandLineParser {
         return outputDir;
     }
 
+
     public boolean isAnonymizeDataEnabled() {
         return anonymizeData;
+    }
+
+    public AtomicLong getStartDateTimestamp() {
+        return  startDateTimestamp;
     }
 
     public void printUsage() {

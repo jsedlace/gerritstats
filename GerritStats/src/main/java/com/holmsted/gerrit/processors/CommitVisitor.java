@@ -1,12 +1,12 @@
 package com.holmsted.gerrit.processors;
 
-import com.holmsted.gerrit.Commit;
-import com.holmsted.gerrit.CommitFilter;
-
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.holmsted.gerrit.Commit;
+import com.holmsted.gerrit.CommitFilter;
 
 public abstract class CommitVisitor {
 
@@ -19,7 +19,7 @@ public abstract class CommitVisitor {
 
     public void visit(@Nonnull List<Commit> commits) {
         for (Commit commit : commits) {
-            if (!isIncluded(commit) || !isIncluded(commit.owner)) {
+            if (!isIncluded(commit) || !isIncluded(commit.owner) || !isAfterStartDate(commit)) {
                 continue;
             }
             visitCommit(commit);
@@ -53,6 +53,10 @@ public abstract class CommitVisitor {
 
     private boolean isIncluded(@Nullable Commit.Identity identity) {
         return filter.isIncluded(identity);
+    }
+
+    private boolean isAfterStartDate(@Nonnull Commit commit) {
+        return commit.lastUpdatedDate >= filter.getStartDateTimestamp().get();
     }
 
     public abstract void visitCommit(@Nonnull Commit commit);

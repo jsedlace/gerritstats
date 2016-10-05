@@ -2,6 +2,7 @@ package com.holmsted.gerrit;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,6 +17,7 @@ public class CommitFilter {
     private final List<String> includedBranches = new ArrayList<>();
 
     private boolean includeEmptyEmails;
+    private AtomicLong startDateTimestamp;
 
     CommitFilter() {
     }
@@ -50,5 +52,13 @@ public class CommitFilter {
                 return !excludedEmails.contains(identity.email);
             }
         }
+    }
+
+    public void setStartDateTimestamp(AtomicLong startDateTimestamp) {
+        this.startDateTimestamp = startDateTimestamp;
+    }
+
+    public AtomicLong getStartDateTimestamp() {
+        return startDateTimestamp;
     }
 }

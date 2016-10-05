@@ -1,8 +1,7 @@
 package com.holmsted.gerrit;
 
-import com.holmsted.file.FileReader;
-import com.holmsted.gerrit.GerritStatParser.GerritData;
-import com.holmsted.gerrit.processors.perperson.PerPersonDataProcessor;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,7 +10,10 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.holmsted.file.FileReader;
+import com.holmsted.file.FileReader;
+import com.holmsted.gerrit.GerritStatParser.GerritData;
+import com.holmsted.gerrit.processors.perperson.PerPersonDataProcessor;
 
 public final class GerritStatsMain {
 
@@ -29,6 +31,7 @@ public final class GerritStatsMain {
         filter.setIncludedEmails(commandLine.getIncludedEmails());
         filter.setExcludedEmails(commandLine.getExcludedEmails());
         filter.setIncludeBranches(commandLine.getIncludeBranches());
+        filter.setStartDateTimestamp(commandLine.getStartDateTimestamp());
 
         List<Commit> commits = new ArrayList<>();
         GerritStatParser commitDataParser = new GerritStatParser();
