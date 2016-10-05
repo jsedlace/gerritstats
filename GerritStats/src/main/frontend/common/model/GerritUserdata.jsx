@@ -74,7 +74,8 @@ function getFirstPatchSetIndexWithNonAuthorReview(commit) {
         var patchSet = commit.patchSets[i];
         for (var j = 0; j < patchSet.comments.length; ++j) {
             var comment = patchSet.comments[j];
-            if (commit.owner['email'] != comment.reviewer['email']) {
+
+            if (comment.reviewer && (commit.owner['email'] != comment.reviewer['email'])) {
                 return i;
             }
         }
@@ -340,7 +341,7 @@ export default class GerritUserdata {
                     return;
                 }
                 patchSet.comments.forEach(function(comment) {
-                    if (comment.reviewer['email'] == record.identity['email']) {
+                    if (comment.reviewer && (comment.reviewer['email'] == record.identity['email'])) {
                         commentDates.push({
                             'date': moment(patchSet.createdOnDate).format('YYYY-MM-DD')
                         });

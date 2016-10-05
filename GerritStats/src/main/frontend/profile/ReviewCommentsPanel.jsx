@@ -74,7 +74,7 @@ export default class ReviewCommentsPanel extends React.Component {
                 const comments = patchSet.comments;
                 var j = 0;
                 comments.forEach(function(comment) {
-                    if (comment.reviewer['email'] != userdata.getEmail()) {
+                    if (comment.reviewer && (comment.reviewer['email'] != userdata.getEmail())) {
                         return;
                     }
                     renderedComments.push(this.renderComment(commit, patchSet, comment, j));
